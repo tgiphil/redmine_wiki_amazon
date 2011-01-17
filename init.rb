@@ -33,65 +33,20 @@ class AmazonUrlBuilderUs
   end
 
   def item(asin)
-    # refer: http://beckism.com/2008/02/amazon_affiliate_links/
     @url = "http://www.amazon.com/dp/#{asin}"
     self
   end
 
-  # returns str1 basically.
-  # sometimes returns str2.
-  # (chance of str2 selection is about once over ten times)
-  def random_select(str1, str2)
-    return str1 if rand(10) != 0 || @mode == :testing
-    return str2
-  end
-
   def associate(associate_id)
-    @url = "#{@url}/?tag=#{random_select(associate_id,"rmwa-20")}" unless associate_id == nil
+    @url = "#{@url}/?tag=#{associate_id}" unless associate_id == nil
     self
   end
 
   def image(asin)
-    # refer: http://aaugh.com/imageabuse.html 
     @url = "http://ec3.images-amazon.com/images/P/#{asin}.01._PC_SCMZZZZZZZ_.jpg"
     self
   end
 end
-
-
-class AmazonUrlBuilderJp
-  attr_accessor :url 
-
-  def initialize(mode = nil)
-    @mode = mode
-  end
-
-  def item(asin)
-    # refer: http://chalow.net/2009-01-13-4.html
-    @url = "http://amazon.jp/o/ASIN/#{asin}"
-    self
-  end
-
-  # returns str1 basically.
-  # sometimes returns str2.
-  # (chance of str2 selection is about once over ten times)
-  def random_select(str1, str2)
-    return str1 if rand(10) != 0 || @mode == :testing
-    return str2
-  end
-
-  def associate(associate_id)
-    @url = "#{@url}/#{random_select(associate_id,"rmw-22")}" unless associate_id == nil
-    self
-  end
-
-  def image(asin)
-    # refer: http://aaugh.com/imageabuse.html 
-    @url = "http://ec3.images-amazon.com/images/P/#{asin}.09._PC_SCMZZZZZZZ_.jpg"
-    self
-  end
-end
-
 
 
 class AmazonHelper
@@ -102,7 +57,6 @@ class AmazonHelper
   def builder(country)
     case country
     when :us then AmazonUrlBuilderUs.new(@mode)
-    when :jp then AmazonUrlBuilderJp.new(@mode)
     else AmazonUrlBuilderDefault.new(@mode)
     end
   end
@@ -132,7 +86,7 @@ class AmazonHelper
   end
 
 
-  def get_tag(args)
+  def parse_args(args)
     return "(No parameters specified. ASIN is needed at least)" if args.empty?
     asin, associate_id, country = parse_args(args)
 
@@ -150,7 +104,7 @@ def load_global_settings
   begin
     $rmwa_global_settings = YAML.load_file(conf_file)
   rescue
-    $rmwa_global_settings = { "country" => "jp" }
+    $rmwa_global_settings = { "country" => "en" }
   end
 end
 
@@ -158,9 +112,9 @@ load_global_settings
 
 Redmine::Plugin.register :redmine_wiki_amazon do
   name 'Redmine Plugin Amazon Link Wiki Macro'
-  author 'Takashi Oguma'
+  author 'Takashi Oguma; modified by Phil Garcia'
   description 'This plugin provides a macro \'amazon\' for Wiki which allows you to embed images and links to Amazon product page.'
-  version '0.0.1'
+  version '0.0.1m'
 
   Redmine::WikiFormatting::Macros.register do
     desc "make a link to Amazon product page.\n"
