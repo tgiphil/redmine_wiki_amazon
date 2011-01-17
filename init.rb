@@ -55,10 +55,7 @@ class AmazonHelper
   end
 
   def builder(country)
-    case country
-    when :us then AmazonUrlBuilderUs.new(@mode)
-    else AmazonUrlBuilderDefault.new(@mode)
-    end
+    AmazonUrlBuilderUs.new(@mode)
   end
 
 
