@@ -61,6 +61,7 @@ class AmazonHelper
     end
   end
 
+
   def trim(str)
     return str.strip unless str == nil
     return nil
@@ -86,7 +87,7 @@ class AmazonHelper
   end
 
 
-  def parse_args(args)
+  def get_tag(args)
     return "(No parameters specified. ASIN is needed at least)" if args.empty?
     asin, associate_id, country = parse_args(args)
 
